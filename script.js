@@ -334,6 +334,3 @@ const reservationDate = document.querySelector(
 const today = new Date().toISOString().split("T")[0];
 
 reservationDate.min = today;
-
-const contactForm = document.getElementById("contactForm");
-const contactMessage = document.querySelector(".contact-message");
