@@ -286,21 +286,23 @@
 
         </div>
 
-        <form class="contact-form">
+        <form class="contact-form" id="contactForm">
 
-            <input type="text" placeholder="Your Name">
+    <input type="text" name="name" placeholder="Your Name" required>
 
-            <input type="email" placeholder="Your Email">
+    <input type="email" name="email" placeholder="Your Email" required>
 
-            <input type="tel" placeholder="Phone Number">
+    <input type="tel" name="phone" placeholder="Phone Number">
 
-            <textarea placeholder="Your Message"></textarea>
+    <textarea name="message" placeholder="Your Message" required></textarea>
 
-            <button type="submit" class="btn">
-                Send Message
-            </button>
+    <button type="submit" class="btn">
+        Send Message
+    </button>
 
-        </form>
+    <p class="contact-message"></p>
+
+</form>
 
     </div>
 

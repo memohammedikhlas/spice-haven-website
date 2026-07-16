@@ -200,6 +200,58 @@ reservationForm.addEventListener("submit", async function(e){
 
 });
 
+const contactForm = document.querySelector(".contact-form");
+const contactMessage = document.querySelector(".contact-message");
+
+contactForm.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const formData = new FormData(contactForm);
+    const contactData = Object.fromEntries(formData.entries());
+
+    try{
+
+        const response = await fetch(
+            "https://spice-haven-backend.onrender.com/contact",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(contactData)
+            }
+        );
+
+        const result = await response.json();
+
+        if(result.success){
+
+            contactMessage.textContent =
+                "✔ Message Sent Successfully!";
+
+            contactForm.reset();
+
+        }else{
+
+            contactMessage.textContent =
+                "Something went wrong. Please try again.";
+
+        }
+
+    }catch(error){
+
+        contactMessage.textContent =
+            "Something went wrong. Please try again.";
+
+        console.error(error);
+
+    }
+
+});
+
 const loader = document.querySelector(".loader");
 
 window.addEventListener("load", function(){
