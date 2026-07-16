@@ -63,6 +63,27 @@ async function loadReservations() {
                         <td>${reservation.date || "-"}</td>
                         <td>${reservation.time || "-"}</td>
                         <td>${reservation.guests || "-"}</td>
+                        <td>
+    <select
+        class="status-select"
+        onchange="updateReservationStatus('${reservation._id}', this.value)"
+    >
+        <option value="Pending"
+            ${(reservation.status || "Pending") === "Pending" ? "selected" : ""}>
+            Pending
+        </option>
+
+        <option value="Confirmed"
+            ${reservation.status === "Confirmed" ? "selected" : ""}>
+            Confirmed
+        </option>
+
+        <option value="Cancelled"
+            ${reservation.status === "Cancelled" ? "selected" : ""}>
+            Cancelled
+        </option>
+    </select>
+</td>
                     </tr>
 
                 `).join("");
@@ -83,6 +104,45 @@ async function loadReservations() {
     }
 }
 
+async function updateReservationStatus(id, status) {
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/admin/reservations/${id}/status`,
+            {
+                method: "PATCH",
+
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    status: status
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (!result.success) {
+            alert("Failed to update status");
+            loadReservations();
+            return;
+        }
+
+        console.log("Status updated successfully");
+
+    } catch (error) {
+
+        console.error("Status update error:", error);
+
+        alert("Something went wrong while updating status");
+
+        loadReservations();
+    }
+}
 
 // Contact messages load karo
 async function loadContacts() {
