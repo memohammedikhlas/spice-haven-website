@@ -163,3 +163,18 @@ tbody tr:hover {
         padding: 18px;
     }
 }
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.delete-btn:hover {
+    background: #b02a37;
+}

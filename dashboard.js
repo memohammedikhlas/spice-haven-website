@@ -84,6 +84,14 @@ async function loadReservations() {
         </option>
     </select>
 </td>
+<td>
+    <button
+        class="delete-btn"
+        onclick="deleteReservation('${reservation._id}')"
+    >
+        Delete
+    </button>
+</td>
                     </tr>
 
                 `).join("");
@@ -141,6 +149,47 @@ async function updateReservationStatus(id, status) {
         alert("Something went wrong while updating status");
 
         loadReservations();
+    }
+}
+
+async function deleteReservation(id) {
+
+    const confirmed = confirm(
+        "Are you sure you want to delete this reservation?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/admin/reservations/${id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Reservation deleted successfully");
+
+            // Table ko dobara load karega
+            loadReservations();
+        } else {
+            alert(result.message || "Failed to delete reservation");
+        }
+
+    } catch (error) {
+
+        console.error("Delete reservation error:", error);
+        alert("Something went wrong while deleting reservation");
+
     }
 }
 
