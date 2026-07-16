@@ -193,6 +193,51 @@ async function deleteReservation(id) {
     }
 }
 
+async function deleteContact(id) {
+
+    const confirmed = confirm(
+        "Are you sure you want to delete this contact message?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API_URL}/admin/contacts/${id}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            alert("Contact message deleted successfully");
+
+            loadContacts();
+
+        } else {
+
+            alert(result.message || "Failed to delete contact message");
+
+        }
+
+    } catch (error) {
+
+        console.error("Delete contact error:", error);
+
+        alert("Something went wrong while deleting contact message");
+
+    }
+}
+
 // Contact messages load karo
 async function loadContacts() {
 
@@ -240,6 +285,14 @@ async function loadContacts() {
                         <td>${contact.email || "-"}</td>
                         <td>${contact.phone || "-"}</td>
                         <td>${contact.message || "-"}</td>
+                        <td>
+    <button
+        class="delete-btn"
+        onclick="deleteContact('${contact._id}')"
+    >
+        Delete
+    </button>
+</td>
                     </tr>
 
                 `).join("");
@@ -252,7 +305,7 @@ async function loadContacts() {
 
         contactsTable.innerHTML = `
             <tr>
-                <td colspan="4">
+                <td colspan="5">
                     Failed to load messages.
                 </td>
             </tr>
