@@ -8,6 +8,14 @@ const contactsTable = document.getElementById("contactsTable");
 const reservationCount = document.getElementById("reservationCount");
 const contactCount = document.getElementById("contactCount");
 
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 // Token nahi hai to login page par bhejo
 if (!token) {
@@ -45,7 +53,7 @@ async function loadReservations() {
 
                 reservationsTable.innerHTML = `
                     <tr>
-                        <td colspan="5">
+                        <td colspan="7">
                             No reservations found.
                         </td>
                     </tr>
@@ -58,11 +66,11 @@ async function loadReservations() {
                 result.reservations.map(reservation => `
 
                     <tr>
-                        <td>${reservation.name || "-"}</td>
-                        <td>${reservation.phone || "-"}</td>
-                        <td>${reservation.date || "-"}</td>
-                        <td>${reservation.time || "-"}</td>
-                        <td>${reservation.guests || "-"}</td>
+                        <td>${escapeHTML(reservation.name || "-")}</td>
+                        <td>${escapeHTML(reservation.phone || "-")}</td>
+                        <td>${escapeHTML(reservation.date || "-")}</td>
+                        <td>${escapeHTML(reservation.time || "-")}</td>
+                        <td>${escapeHTML(reservation.guests || "-")}</td>
                         <td>
     <select
         class="status-select"
@@ -104,7 +112,7 @@ async function loadReservations() {
 
         reservationsTable.innerHTML = `
             <tr>
-                <td colspan="5">
+                <td colspan="7">
                     Failed to load reservations.
                 </td>
             </tr>
@@ -131,6 +139,11 @@ async function updateReservationStatus(id, status) {
                 })
             }
         );
+
+        if (response.status === 401) {
+    logout();
+    return;
+}
 
         const result = await response.json();
 
@@ -174,6 +187,11 @@ async function deleteReservation(id) {
             }
         );
 
+        if (response.status === 401) {
+    logout();
+    return;
+}
+
         const result = await response.json();
 
         if (result.success) {
@@ -214,6 +232,11 @@ async function deleteContact(id) {
                 }
             }
         );
+
+        if (response.status === 401) {
+            logout();
+            return;
+        }
 
         const result = await response.json();
 
@@ -268,7 +291,7 @@ async function loadContacts() {
 
                 contactsTable.innerHTML = `
                     <tr>
-                        <td colspan="4">
+                        <td colspan="5">
                             No contact messages found.
                         </td>
                     </tr>
@@ -281,10 +304,10 @@ async function loadContacts() {
                 result.contacts.map(contact => `
 
                     <tr>
-                        <td>${contact.name || "-"}</td>
-                        <td>${contact.email || "-"}</td>
-                        <td>${contact.phone || "-"}</td>
-                        <td>${contact.message || "-"}</td>
+                        <td>${escapeHTML(contact.name || "-")}</td>
+                        <td>${escapeHTML(contact.email || "-")}</td>
+                        <td>${escapeHTML(contact.phone || "-")}</td>
+                        <td>${escapeHTML(contact.message || "-")}</td>
                         <td>
     <button
         class="delete-btn"

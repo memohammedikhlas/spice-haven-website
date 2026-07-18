@@ -32,8 +32,9 @@ adminLoginForm.addEventListener("submit", async function(e) {
 
         window.location.href = "dashboard.html";
         } else {
-            loginMessage.textContent = "Invalid username or password";
-        }
+    loginMessage.textContent =
+        result.message || "Invalid username or password";
+}
 
     } catch (error) {
         console.error(error);

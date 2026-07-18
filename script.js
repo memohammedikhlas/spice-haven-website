@@ -178,16 +178,24 @@ reservationForm.addEventListener("submit", async function(e){
 
         });
 
-        const result = await response.json();
+       const result = await response.json();
 
-        if(result.success){
+if (result.success) {
 
-            reservationMessage.textContent =
-                "✔ Table Reserved Successfully!";
+    reservationMessage.textContent =
+        "✔ Table Reserved Successfully!";
 
-            reservationForm.reset();
+    reservationMessage.style.color = "green";
 
-        }
+    reservationForm.reset();
+
+} else {
+
+    reservationMessage.textContent =
+        result.message || "Something went wrong. Please try again.";
+
+    reservationMessage.style.color = "red";
+}
 
     }catch(error){
 
@@ -225,30 +233,33 @@ contactForm.addEventListener("submit", async function(e){
             }
         );
 
-        const result = await response.json();
+       const result = await response.json();
 
-        if(result.success){
+if (result.success) {
 
-            contactMessage.textContent =
-                "✔ Message Sent Successfully!";
+    contactMessage.textContent =
+        "✔ Message Sent Successfully!";
 
-            contactForm.reset();
+    contactMessage.style.color = "green";
 
-        }else{
+    contactForm.reset();
 
-            contactMessage.textContent =
-                "Something went wrong. Please try again.";
+} else {
 
-        }
+    contactMessage.textContent =
+        result.message || "Something went wrong. Please try again.";
 
-    }catch(error){
+    contactMessage.style.color = "red";
+}
+    } catch (error) {
 
-        contactMessage.textContent =
-            "Something went wrong. Please try again.";
+    contactMessage.textContent =
+        "Something went wrong. Please try again.";
 
-        console.error(error);
+    contactMessage.style.color = "red";
 
-    }
+    console.error(error);
+}
 
 });
 
