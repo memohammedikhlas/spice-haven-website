@@ -160,6 +160,11 @@ reservationForm.addEventListener("submit", async function(e){
 
     e.preventDefault();
 
+    const submitButton = reservationForm.querySelector('button[type="submit"]');
+
+submitButton.disabled = true;
+submitButton.textContent = "Reserving...";
+
     const formData = new FormData(reservationForm);
 
     const reservationData = Object.fromEntries(formData.entries());
@@ -202,9 +207,14 @@ if (result.success) {
         reservationMessage.textContent =
             "Something went wrong. Please try again.";
 
+            reservationMessage.style.color = "red";
+
         console.error(error);
 
     }
+
+    submitButton.disabled = false;
+submitButton.textContent = "Reserve Now";
 
 });
 
@@ -214,6 +224,11 @@ const contactMessage = document.querySelector(".contact-message");
 contactForm.addEventListener("submit", async function(e){
 
     e.preventDefault();
+
+    const submitButton = contactForm.querySelector('button[type="submit"]');
+
+submitButton.disabled = true;
+submitButton.textContent = "Sending...";
 
     const formData = new FormData(contactForm);
     const contactData = Object.fromEntries(formData.entries());
@@ -260,6 +275,9 @@ if (result.success) {
 
     console.error(error);
 }
+
+submitButton.disabled = false;
+submitButton.textContent = "Send Message";
 
 });
 
