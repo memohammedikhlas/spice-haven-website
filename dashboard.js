@@ -8,6 +8,8 @@ const contactsTable = document.getElementById("contactsTable");
 const reservationCount = document.getElementById("reservationCount");
 const contactCount = document.getElementById("contactCount");
 
+let allReservations = [];
+
 function escapeHTML(value) {
     return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -22,6 +24,21 @@ if (!token) {
     window.location.href = "admin.html";
 }
 
+const reservationSearch =
+    document.getElementById("reservationSearch");
+
+const statusFilter =
+    document.getElementById("statusFilter");
+
+reservationSearch.addEventListener(
+    "input",
+    filterReservations
+);
+
+statusFilter.addEventListener(
+    "change",
+    filterReservations
+);
 
 // Reservations load karo
 async function loadReservations() {
@@ -46,64 +63,13 @@ async function loadReservations() {
 
         if (result.success) {
 
+            allReservations = result.reservations;
+
             reservationCount.textContent =
                 result.reservations.length;
 
-            if (result.reservations.length === 0) {
-
-                reservationsTable.innerHTML = `
-                    <tr>
-                        <td colspan="7">
-                            No reservations found.
-                        </td>
-                    </tr>
-                `;
-
-                return;
-            }
-
-            reservationsTable.innerHTML =
-                result.reservations.map(reservation => `
-
-                    <tr>
-                        <td>${escapeHTML(reservation.name || "-")}</td>
-                        <td>${escapeHTML(reservation.phone || "-")}</td>
-                        <td>${escapeHTML(reservation.date || "-")}</td>
-                        <td>${escapeHTML(reservation.time || "-")}</td>
-                        <td>${escapeHTML(reservation.guests || "-")}</td>
-                        <td>
-    <select
-        class="status-select"
-        onchange="updateReservationStatus('${reservation._id}', this.value)"
-    >
-        <option value="Pending"
-            ${(reservation.status || "Pending") === "Pending" ? "selected" : ""}>
-            Pending
-        </option>
-
-        <option value="Confirmed"
-            ${reservation.status === "Confirmed" ? "selected" : ""}>
-            Confirmed
-        </option>
-
-        <option value="Cancelled"
-            ${reservation.status === "Cancelled" ? "selected" : ""}>
-            Cancelled
-        </option>
-    </select>
-</td>
-<td>
-    <button
-        class="delete-btn"
-        onclick="deleteReservation('${reservation._id}')"
-    >
-        Delete
-    </button>
-</td>
-                    </tr>
-
-                `).join("");
-
+            renderReservations(allReservations);
+            
         }
 
     } catch (error) {
@@ -118,6 +84,90 @@ async function loadReservations() {
             </tr>
         `;
     }
+}
+
+function renderReservations(reservations) {
+
+    if (reservations.length === 0) {
+        reservationsTable.innerHTML = `
+            <tr>
+                <td colspan="7">No reservations found.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    reservationsTable.innerHTML = reservations.map(reservation => `
+        <tr>
+            <td>${escapeHTML(reservation.name || "-")}</td>
+            <td>${escapeHTML(reservation.phone || "-")}</td>
+            <td>${escapeHTML(reservation.date || "-")}</td>
+            <td>${escapeHTML(reservation.time || "-")}</td>
+            <td>${escapeHTML(reservation.guests || "-")}</td>
+
+            <td>
+                <select
+                    class="status-select"
+                    onchange="updateReservationStatus('${reservation._id}', this.value)"
+                >
+                    <option value="Pending"
+                        ${(reservation.status || "Pending") === "Pending" ? "selected" : ""}>
+                        Pending
+                    </option>
+
+                    <option value="Confirmed"
+                        ${reservation.status === "Confirmed" ? "selected" : ""}>
+                        Confirmed
+                    </option>
+
+                    <option value="Cancelled"
+                        ${reservation.status === "Cancelled" ? "selected" : ""}>
+                        Cancelled
+                    </option>
+                </select>
+            </td>
+
+            <td>
+                <button
+                    class="delete-btn"
+                    onclick="deleteReservation('${reservation._id}')"
+                >
+                    Delete
+                </button>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function filterReservations() {
+
+    const searchText =
+        document.getElementById("reservationSearch")
+            .value.toLowerCase().trim();
+
+    const selectedStatus =
+        document.getElementById("statusFilter").value;
+
+    const filteredReservations = allReservations.filter(reservation => {
+
+        const name =
+            String(reservation.name || "").toLowerCase();
+
+        const phone =
+            String(reservation.phone || "").toLowerCase();
+
+        const matchesSearch =
+            name.includes(searchText) ||
+            phone.includes(searchText);
+
+        const matchesStatus =
+            selectedStatus === "All" ||
+            reservation.status === selectedStatus;
+
+        return matchesSearch && matchesStatus;
+    });
+
+    renderReservations(filteredReservations);console.log(filteredReservations);
 }
 
 async function updateReservationStatus(id, status) {
